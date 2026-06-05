@@ -1,21 +1,10 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+import click
 import pandas as pd
 from sqlalchemy import create_engine
 from tqdm.auto import tqdm
-
-config = {
-    "pg_user": "root",
-    "pg_pass": "root",
-    "pg_host": "localhost",
-    "pg_port": 5432,
-    "pg_db": "ny_taxi",
-    "year": 2021,
-    "month": 1,
-    "target_table": "yellow_taxi_data",
-    "chunksize": 100000
-}
 
 
 dtype = {
@@ -43,6 +32,16 @@ parse_dates = [
 ]
 
 
+@click.command()
+@click.option("--pg-user", default="root", show_default=True, help="PostgreSQL user")
+@click.option("--pg-pass", default="root", show_default=True, help="PostgreSQL password")
+@click.option("--pg-host", default="localhost", show_default=True, help="PostgreSQL host")
+@click.option("--pg-port", default=5432, show_default=True, type=int, help="PostgreSQL port")
+@click.option("--pg-db", default="ny_taxi", show_default=True, help="PostgreSQL database")
+@click.option("--year", default=2021, show_default=True, type=int, help="Year of the data file")
+@click.option("--month", default=1, show_default=True, type=int, help="Month of the data file")
+@click.option("--target-table", default="yellow_taxi_data", show_default=True, help="Target PostgreSQL table")
+@click.option("--chunksize", default=100000, show_default=True, type=int, help="CSV iterator chunk size")
 def run(pg_user, pg_pass, pg_host, pg_port, pg_db, year, month, target_table, chunksize):
     """Ingest NYC taxi data into PostgreSQL database."""
     prefix = 'https://github.com/DataTalksClub/nyc-tlc-data/releases/download/yellow'
@@ -79,6 +78,6 @@ def run(pg_user, pg_pass, pg_host, pg_port, pg_db, year, month, target_table, ch
 
 
 if __name__ == '__main__':
-    run(**config)
+    run()
 
 
